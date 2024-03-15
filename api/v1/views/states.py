@@ -3,8 +3,10 @@
 '''Creates view for state objects'''
 
 from flask import Flask, jsonify, abort, request
-from models import state
+from models import state, storage
 from api.v1.views import index
+from api.v1.views import app_views
+from models.state import State
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
 def get_states():
@@ -48,4 +50,3 @@ def update_states(state_id):
             setattr(state, key, value)
     storage.save()
     return jsonify(state.to_dict()), 200
-
