@@ -44,8 +44,9 @@ def create_state():
         abort(400, 'Not a JSON')
     if 'name' not in HTTP_body:
         abort(400, 'Missing name')
-    state = State(**data)
-    state.save()
+    latest_state = State(**HTTP_body)
+    storage.new(latest_state)
+    storage.save()
     return jsonify(state.to_dict()), 201
 
 
