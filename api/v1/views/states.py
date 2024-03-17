@@ -11,9 +11,18 @@ from models.state import State
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
 def get_states():
     '''Gets a state'''
-    states = State.all()
+    states = storage.all(State).values()
     list_of_states = [state.to_dict() for state in states]
-    return jsonify(([state.to_dict() for state in states]))
+    return jsonify(list_of_states)
+
+
+@app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
+def state_by_id(state_id):
+    '''Get state by using id'''
+    state = storage.get(State, state_id)
+    if not state:
+        abort(404)
+    return jsonify(state.to_dict())
 
 
 @app_views.route('/states/<state_id>', methods=['DELETE'], strict_slashes=False)
