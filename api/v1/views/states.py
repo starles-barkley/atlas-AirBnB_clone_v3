@@ -29,7 +29,7 @@ def state_by_id(state_id):
 def delete_state(state_id):
     '''Deletes a State'''
     state = State.get(State, state_id)
-    if state is None:
+    if not state:
         abort(404)
     storage.delete(state)
     storage.save()
