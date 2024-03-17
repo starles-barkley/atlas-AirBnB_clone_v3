@@ -19,7 +19,7 @@ def get_amenities():
 @app_views.route('/amenities/<amenity_id>', methods=['GET'], strict_slashes=False)
 def amenity_by_id(amenity_id):
     '''Get amenity by using id'''
-    amenity = Amenity.query.get(amenity_id)
+    amenity = storage.get(Amenity, amenity_id)
     if not amenity:
         abort(404)
     return jsonify(amenity.to_dict())
