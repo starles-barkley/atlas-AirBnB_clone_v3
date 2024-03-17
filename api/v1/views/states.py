@@ -39,7 +39,7 @@ def delete_state(state_id):
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_state():
     '''creates a state'''
-    HTTP_body = request.get_json
+    HTTP_body = request.get_json(silent=True)
     if not HTTP_body:
         abort(400, 'Not a JSON')
     if 'name' not in HTTP_body:
@@ -47,7 +47,8 @@ def create_state():
     latest_state = State(**HTTP_body)
     storage.new(latest_state)
     storage.save()
-    return jsonify(state.to_dict()), 201
+    return jsonify(latest_state.to_dict()), 201
+
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
