@@ -3,7 +3,7 @@
 '''Creates view for state objects'''
 
 from flask import Flask, jsonify, abort, request
-from models import state, storage
+from models import storage
 from api.v1.views import index
 from api.v1.views import app_views
 from models.state import State
