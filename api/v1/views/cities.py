@@ -38,7 +38,7 @@ def create_cities(state_id=None):
     http = request.get_json(silent=True)
     
     # get_json returns None if it fails
-    if not http:
+    if http is None:
         abort(404, 'Not a JSON')
 
     # checks if name is in http dict
