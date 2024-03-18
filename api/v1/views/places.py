@@ -48,41 +48,47 @@ def manipulate_cities(place_id):
     return jsonify(place.to_dict()), 200
 
 @app_views.route("/cities/<city_id>/places", strict_slashes=False,
-                  methods=['POST'])
+                  methods=['POST', 'GET'])
 def create_place(city_id):
 
     city = storage.get(City, city_id)
     if city is None:
         abort(404)
+    if request.method == 'POST':
 
-    # uses get_json to parse http_body into dict
-    http = request.get_json(silent=True)
+        # uses get_json to parse http_body into dict
+        http = request.get_json(silent=True)
 
-    # get_json returns None if it fails
-    if http is None:
-        abort(400, 'Not a JSON')
+        # get_json returns None if it fails
+        if http is None:
+            abort(400, 'Not a JSON')
 
-    # checks if name is in http dict
-    if 'user_id' not in http:
-        abort(400, 'Missing user_id')
+        # checks if name is in http dict
+        if 'user_id' not in http:
+            abort(400, 'Missing user_id')
 
-    if 'name' not in http:
-        abort(400, 'Missing name')
+        if 'name' not in http:
+            abort(400, 'Missing name')
 
-    user = storage.get(User, http.get('user_id'))
-    if user is None:
-        abort(404)
-    
-    # adds state_id to http dict
-    http.update({"city_id": city_id})
-
-    # init new city with http dict
-    place = Place(**http)
-
-    # performs new on object, updates and saves with
-    # Basemodel save method
-    place.save()
-
-    # returns jsonified dict of city object
-    return jsonify(place.to_dict()), 201
+        user = storage.get(User, http.get('user_id'))
+        if user is None:
+            abort(404)
         
+        # adds state_id to http dict
+        http.update({"city_id": city_id})
+
+        # init new city with http dict
+        place = Place(**http)
+
+        # performs new on object, updates and saves with
+        # Basemodel save method
+        place.save()
+
+        # returns jsonified dict of city object
+        return jsonify(place.to_dict()), 201
+    if request.method == 'GET':
+        l = []
+        for place in storage.all(Place):
+            if city_id == place.city_id:
+                l.append(place.to_dict())
+        return jsonify(l)
