@@ -90,5 +90,5 @@ def create_place(city_id):
         l = []
         for place in storage.all(Place):
             if city_id == place.city_id:
-                l.append(place.to_dict())
-        return jsonify(l)
+                l.append(place)
+        return jsonify([place.to_dict() for place in l])
