@@ -6,7 +6,9 @@ from flask import Flask, jsonify, abort, request
 from models import storage
 from api.v1.views import index
 from api.v1.views import app_views
-from models.reviews import Reviews
+from models.review import Reviews
+from models.user import User
+from models.place import Place
 
 
 @app_views.route('/reviews', methods=['GET'], strict_slashes=False)
