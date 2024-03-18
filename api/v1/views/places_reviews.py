@@ -11,7 +11,7 @@ from models.user import User
 from models.place import Place
 
 
-@app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/places/<place_id>/reviews', methods=['GET'], strict_slashes=False)
 def get_reviews(place_id):
     '''Gets all reviews of a specific place'''
     place = storage.get(Place, place_id)
@@ -42,7 +42,7 @@ def delete_review(review_id):
     return jsonify({}), 200
 
 
-@app_views.route('/reviews', methods=['POST'], strict_slashes=False)
+@app_views.route('/places/<place_id>/reviews', methods=['POST'], strict_slashes=False)
 def create_review(place_id):
     '''creates a review'''
     place = storage.get(Place, place_id)
