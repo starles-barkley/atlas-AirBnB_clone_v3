@@ -4,8 +4,23 @@ from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 
 
-@app_views.route("/states/<state_id>/cities", methods=['GET', 'POST'])
+@app_views.route("/states/<state_id>/cities", methods=['GET'])
 def get_cities(state_id=None):
+    from models import storage
+    from models.state import State
+    from models.city import City
+    if state_id is None:
+        abort(404)
+    state = storage.get(State, state_id)
+    if state is None:
+        abort (404)
+    all_cities = state.cities
+    if len(all_cities) < 1:
+        return []
+    return jsonify([city.to_dict() for city in all_cities])
+    
+@app_views.route("/states/<state_id>/cities", methods=['POST'])
+def create_cities(state_id=None):
     from models import storage
     from models.state import State
     from models.city import City
@@ -14,20 +29,14 @@ def get_cities(state_id=None):
     state = storage.get(State, state_id)
     if state is None:
         abort (402)
-    if request.method == 'GET':
-        all_cities = state.cities
-        if len(all_cities) < 1:
-            return []
-        return jsonify([city.to_dict() for city in all_cities])
-    if request.method == 'POST':
-        http = request.get_json()
-        if not http:
-            abort(404, 'Not a JSON')
-        if 'name' not in http:
-            abort(400, 'Missing name')
-        city = City(**http)
-        storage.new(city)
-        return jsonify(city.to_dict()), 201
+    http = request.get_json()
+    if not http:
+        abort(404, 'Not a JSON')
+    if 'name' not in http:
+        abort(400, 'Missing name')
+    city = City(**http)
+    storage.new(city)
+    return jsonify(city.to_dict()), 201
 
 
 @app_views.route("/cities/<city_id>", methods=['GET', 'PUT'])
