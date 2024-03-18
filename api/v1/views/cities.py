@@ -11,28 +11,21 @@ def get_cities(state_id=None):
     from models.city import City
     if state_id is None:
         abort(404)
+    state = storage.get(State, state_id)
+    if state is None:
+        abort (404)
     if request.method == 'GET':
-        state = storage.get(State, state_id)
-        if state is None:
-            abort (404)
         all_cities = state.cities
         if len(all_cities) < 1:
             return []
         return jsonify([city.to_dict() for city in all_cities])
     if request.method == 'POST':
-        try:
-            http = request.get_json()
-        except Exception:
-            return "Not a JSON", 400
-        try:
-            name = http.get("name")
-        except Exception:
-            abort(400)
-        try:
-            state = storage.get(State, state_id)
-        except Exception:
-            abort(404)
-        city = City(state_id=state_id, name=name)
+        http = request.get_json()
+        if not http:
+            abort(404, 'Not a JSON')
+        if 'name' not in http:
+            abort(400, 'Missing name')
+        city = City(**http)
         storage.new(city)
         return jsonify(city.to_dict()), 201
 
