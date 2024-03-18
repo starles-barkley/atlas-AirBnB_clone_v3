@@ -7,8 +7,8 @@ from models.place import Place
 from models.city import City
 from models.user import User
 
-@app_views.route("/places/<place_id>", methods=['GET', 'DELETE', 'PUT'],
-                 strict_slashes=False)
+@app_views.route("/places/<place_id>", strict_slashes=False, 
+                 methods=['GET', 'DELETE', 'PUT'])
 def manipulate_cities(place_id):
     place = storage.get(Place, place_id)
     if place is None:
@@ -47,9 +47,9 @@ def manipulate_cities(place_id):
     # returning place object
     return jsonify(place.to_dict()), 200
 
-@app_views.route("/cities/<city_id>/places", methods=['POST'],
-                 strict_slashes=False)
-def get_cities(city_id):
+@app_views.route("/cities/<city_id>/places", strict_slashes=False,
+                  methods=['POST'])
+def create_place(city_id):
 
     city = storage.get(City, city_id)
     if city is None:
