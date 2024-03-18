@@ -10,10 +10,10 @@ def get_cities(state_id=None):
     from models.state import State
     from models.city import City
     if state_id is None:
-        abort(404, 'state_id is None')
+        abort(401)
     state = storage.get(State, state_id)
     if state is None:
-        abort (404, 'state object is None')
+        abort (402)
     if request.method == 'GET':
         all_cities = state.cities
         if len(all_cities) < 1:
