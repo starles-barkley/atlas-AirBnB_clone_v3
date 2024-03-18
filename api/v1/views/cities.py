@@ -51,7 +51,7 @@ def get_cities(state_id):
 
 @app_views.route("/cities/<city_id>", methods=['GET', 'PUT'],
                  strict_slashes=False)
-def get_city(city_id=None):
+def get_city(city_id):
     from models import storage
     from models.city import City
     
@@ -77,12 +77,12 @@ def get_city(city_id=None):
             
             # skipping if key in ignore list
             # least, that's what i hope continue does
-            if key in ignored_attr:
-                continue
+            if key not in ignored_attr:
+                setattr(city, key, value)
 
             # updating city dictionary
             # which saves in the city object right?
-            city.__dict__.update({key: value})
+            
         city.save()
 
     # returning city object        
