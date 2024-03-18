@@ -34,14 +34,11 @@ def get_cities(state_id):
         if 'name' not in http:
             abort(400, 'Missing name')
         
+        # adds state_id to http dict
         http.update({"state_id" : state_id})
         
+        # init new city with http dict
         city = City(**http)
-        # adds state_id to http dict
-    
-        # setattr(city, "state_id", state_id)
-        
-        # init new City object with http dict
 
         # performs new on object, updates and saves with
         # Basemodel save method
@@ -52,7 +49,8 @@ def get_cities(state_id):
 
 
 
-@app_views.route("/cities/<city_id>", methods=['GET', 'PUT'])
+@app_views.route("/cities/<city_id>", methods=['GET', 'PUT'],
+                 strict_slashes=False)
 def get_city(city_id=None):
     from models import storage
     from models.city import City
