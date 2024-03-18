@@ -7,7 +7,8 @@ from models.place import Place
 from models.city import City
 from models.user import User
 
-@app_views.route("/places/<place_id>", strict_slashes=False, 
+
+@app_views.route("/places/<place_id>", strict_slashes=False,
                  methods=['GET', 'DELETE', 'PUT'])
 def manipulate_cities(place_id):
     place = storage.get(Place, place_id)
@@ -48,8 +49,9 @@ def manipulate_cities(place_id):
     # returning place object
     return jsonify(place.to_dict()), 200
 
+
 @app_views.route("/cities/<city_id>/places", strict_slashes=False,
-                  methods=['POST', 'GET'])
+                 methods=['POST', 'GET'])
 def create_place(city_id):
 
     city = storage.get(City, city_id)
@@ -74,7 +76,7 @@ def create_place(city_id):
         user = storage.get(User, http.get('user_id'))
         if user is None:
             abort(404)
-        
+
         # adds state_id to http dict
         http.update({"city_id": city_id})
 
@@ -88,11 +90,11 @@ def create_place(city_id):
         # returns jsonified dict of city object
         return jsonify(place.to_dict()), 201
     if request.method == 'GET':
-        l = []
+        list = []
         all_places = storage.all(Place)
         for place in all_places.values():
             if city_id == place.city_id:
-                l.append(place)
-        if len(l) < 1:
-            return l
-        return jsonify([place.to_dict() for place in l])
+                list.append(place)
+        if len(list) < 1:
+            return list
+        return jsonify([place.to_dict() for place in list])
