@@ -88,7 +88,7 @@ def get_city(city_id=None):
             city.__dict__.update({key: value})
 
     # returning city object        
-    return jsonify(city.to_dict()), 201
+    return jsonify(city.to_dict()), 200
 
 @app_views.route("/cities/<city_id>", methods=['DELETE'])
 def destroy_state(city_id=None):
