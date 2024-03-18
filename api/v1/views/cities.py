@@ -19,20 +19,20 @@ def get_cities(state_id=None):
         return []
     return jsonify([city.to_dict() for city in all_cities])
     
-@app_views.route("/states/<state_id>/cities", methods=['POST'])
-def create_cities(state_id=None):
+@app_views.route("/states/<state_id>/cities", methods=['POST'], strict_slashes=True)
+def create_cities(state_id):
     from models import storage
     from models.state import State
     from models.city import City
 
     # checking if state_id given is None
-    if state_id is None:
-        abort(404, "state_id is none")
+    # if state_id is None:
+    #     abort(404, "state_id is none")
 
     # checks if state_id is connected to state object
-    state = storage.get(State, state_id)
-    if state is None:
-        abort (404, "state object is none")
+    # state = storage.get(State, state_id)
+    # if state is None:
+    #     abort (404, "state object is none")
 
     # uses get_json to parse http_body into dict
     http = request.get_json(silent=True)
@@ -45,11 +45,12 @@ def create_cities(state_id=None):
     if 'name' not in http.keys():
         abort(400, 'Missing name')
     
+    city = City(**http)
     # adds state_id to http dict
-    http.update({'state_id': state_id})
+   
+    setattr(city, 'state_id', state_id)
     
     # init new City object with http dict
-    city = City(**http)
 
     # performs new on object, updates and saves with
     # Basemodel save method
@@ -97,7 +98,7 @@ def get_city(city_id=None):
             city.__dict__.update({key: value})
 
     # returning city object        
-    return jsonify(city.to_dict())
+    return jsonify(city.to_dict()), 201
 
 @app_views.route("/cities/<city_id>", methods=['DELETE'])
 def destroy_state(city_id=None):
