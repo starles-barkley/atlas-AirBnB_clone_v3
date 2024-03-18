@@ -24,14 +24,14 @@ def create_cities(state_id=None):
     from models import storage
     from models.state import State
     from models.city import City
-    # if state_id is None:
-    #     abort(404)
+    if state_id is None:
+        abort(404, "state_id is none")
     state = storage.get(State, state_id)
-    # if state is None:
-    #     abort (404)
-    http = request.get_json()
-    # if not http:
-    #     abort(404, 'Not a JSON')
+    if state is None:
+        abort (404, "state object is none")
+    http = request.get_json(silent=True)
+    if not http:
+        abort(404, 'Not a JSON')
     if 'name' not in http:
         abort(400, 'Missing name')
     city = City(**http)
