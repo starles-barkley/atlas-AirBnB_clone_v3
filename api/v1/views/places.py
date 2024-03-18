@@ -1,14 +1,13 @@
 #!/usr/bin/python3
 """module that contains view funcs for place"""
 from api.v1.views import app_views
-from flask import Flask, jsonify, abort, request
 
 
 @app_views.route("/places/<place_id>", methods=['GET', 'DELETE', 'PUT'],
                  strict_slashes=False)
 def get_cities(place_id):
+    from flask import jsonify, abort, request
     from models import storage
-    from models.state import State
     from models.place import Place
     place = storage.get(Place, place_id)
     if place is None:
@@ -51,6 +50,7 @@ def get_cities(place_id):
                  strict_slashes=False)
 def get_cities(city_id):
     from models import storage
+    from flask import jsonify, abort, request
     from models.state import Place
     from models.city import City
     from models.user import User
@@ -71,7 +71,7 @@ def get_cities(city_id):
 
     if 'name' not in http:
         abort(400, 'Missing name')
-        
+
     user = storage.get(User, http.get('user_id'))
     if user is None:
         abort(404)
