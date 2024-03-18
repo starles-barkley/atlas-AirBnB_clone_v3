@@ -68,14 +68,15 @@ def create_review(place_id):
     '/reviews/<review_id>', methods=['PUT'], strict_slashes=False)
 def update_reviews(review_id):
     '''Updates a review'''
-    json_data = request.get_json(silent=True)
+    HTTP_body = request.get_json(silent=True)
     review = storage.get(Review, review_id)
     if not review:
         abort(404)
-    if not json_data:
+    if not HTTP_body:
         abort(400, "Not a JSON")
-    for key, value in json_data.items():
-        if key not in ["id", "created_at", "updated_at"]:
+    for key, value in HTTP_body.items():
+        if key not in [
+            "id", "user_id", "place_id" "created_at", "updated_at"]:
             setattr(review, key, value)
-    storage.save()
+    review.save()
     return jsonify(review.to_dict()), 200
