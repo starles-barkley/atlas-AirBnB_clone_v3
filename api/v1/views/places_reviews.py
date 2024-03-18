@@ -47,7 +47,7 @@ def create_review(place_id):
     '''creates a review'''
     place = storage.get(Place, place_id)
     if not place:
-        abort(400, 'Place not found')
+        abort(404, 'Place not found')
     HTTP_body = request.get_json(silent=True)
     if not HTTP_body:
         abort(400, 'Not a json')
