@@ -13,11 +13,12 @@ from models.place import Place
 
 @app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
 def get_reviews(place_id):
-    '''Gets all reviews of a specific place'''
-    place = storage.get(Place, place_id)
-    if not place:
+    '''Returns a list of reviews of a specific place'''
+    reviewed_place = storage.get(Place, place_id)
+    if not reviewed_place:
         abort(404)
-    return jsonify([review.to_dict() for review in place.reviews])
+    list_of_reviews = [review.to_dict() for review in reviewed_place.reviews]
+    return jsonify(list_of_reviews)
 
 
 @app_views.route(
