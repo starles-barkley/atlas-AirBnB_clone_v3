@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """init app flask object and runs app"""
 from flask import Flask, jsonify
+from flask_cors import CORS
 from models import storage
 # hasn't been created yet
 from api.v1.views import app_views
@@ -9,6 +10,7 @@ from os import environ
 
 app = Flask(__name__)
 app.register_blueprint(app_views, url_prefix='/api/v1')
+cors = CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
 
 # register blueprint app_views to app ?
