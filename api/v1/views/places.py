@@ -88,9 +88,10 @@ def create_place(city_id):
         return jsonify(place.to_dict()), 201
     if request.method == 'GET':
         l = []
-        for place in storage.all(Place):
+        all_places = storage.all(Place)
+        for place in all_places.values():
             if city_id == place.city_id:
                 l.append(place)
         if len(l) < 1:
-            return []
+            return l
         return jsonify([place.to_dict() for place in l])
