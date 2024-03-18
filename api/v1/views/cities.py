@@ -28,16 +28,18 @@ def get_cities(state_id):
         
         # get_json returns None if it fails
         if http is None:
-            abort(400, description='Not a JSON')
+            abort(400, 'Not a JSON')
 
         # checks if name is in http dict
         if 'name' not in http:
-            abort(400, description='Missing name')
+            abort(400, 'Missing name')
+        
+        http.update({"state_id" : state_id})
         
         city = City(**http)
         # adds state_id to http dict
     
-        setattr(city, "state_id", state_id)
+        # setattr(city, "state_id", state_id)
         
         # init new City object with http dict
 
