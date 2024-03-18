@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
 """module that contains view funcs for place"""
 from api.v1.views import app_views
