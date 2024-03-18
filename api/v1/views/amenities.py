@@ -12,7 +12,9 @@ from models.amenity import Amenity
 @app_views.route('/amenities', methods=['GET'], strict_slashes=False)
 def get_amenities():
     '''Gets all amenities'''
-    amenities = [amenity.to_dict() for amenity in Amenity.query.all()]
+    amenities = []
+    for amenity in storage.all(Amenity).values():
+        amenities.append(amenity.to_dict())
     return jsonify(amenities)
 
 
@@ -54,13 +56,13 @@ def create_amenity():
 @app_views.route('/amenities/<amenity_id>', methods=['PUT'], strict_slashes=False)
 def update_amenities(amenity_id):
     '''Updates an amenity'''
+    json_data = request.get_json(silent=True)
     amenity = storage.get(Amenity, amenity_id)
     if not amenity:
         abort(404)
-    HTTP_body = request.get_json(silent=True)
-    if not HTTP_body:
+    if not json_data:
         abort(400, "Not a JSON")
-    for key, value in HTTP_body.items():
+    for key, value in json_data.items():
         if key not in ["id", "created_at", "updated_at"]:
             setattr(amenity, key, value)
     storage.save()
