@@ -11,7 +11,7 @@ from models.user import User
 from models.place import Place
 
 
-@app_views.route('/reviews', methods=['GET'], strict_slashes=False)
+@app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
 def get_reviews():
     '''Gets all reviews of a specific place'''
     place = storage.get(Place, place_id)
@@ -43,13 +43,21 @@ def delete_review(review_id):
 
 
 @app_views.route('/reviews', methods=['POST'], strict_slashes=False)
-def create_reviews():
+def create_review(place_id):
     '''creates a review'''
-    HTTP_body = request.get_json(silent=True)
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(400)
+    HTTP_body = request.get_json()
     if not HTTP_body:
-        abort(400, 'Not a JSON')
-    if 'name' not in HTTP_body:
-        abort(400, 'Missing name')
+        abort(400, 'Not a json')
+    if 'user_id' not in HTTP_body:
+        abort(400, 'Missing user_id')
+    user = storage.get(User, HTTP_body['user_id'])
+    if not user:
+        abort(404)
+    if 'text' not in HTTP_body:
+        abort(400, 'Missing text')
     latest_review = Review(**HTTP_body)
     storage.new(latest_review)
     storage.save()
