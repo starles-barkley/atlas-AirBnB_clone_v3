@@ -9,7 +9,7 @@ from models.user import User
 
 @app_views.route("/places/<place_id>", methods=['GET', 'DELETE', 'PUT'],
                  strict_slashes=False)
-def get_cities(place_id):
+def manipulate_cities(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
