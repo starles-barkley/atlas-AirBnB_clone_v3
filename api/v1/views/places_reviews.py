@@ -6,13 +6,13 @@ from flask import Flask, jsonify, abort, request
 from models import storage
 from api.v1.views import index
 from api.v1.views import app_views
-from models.review import Reviews
+from models.review import Review
 from models.user import User
 from models.place import Place
 
 
 @app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
-def get_reviews():
+def get_reviews(place_id):
     '''Gets all reviews of a specific place'''
     place = storage.get(Place, place_id)
     if not place:
