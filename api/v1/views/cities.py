@@ -55,9 +55,6 @@ def get_city(city_id=None):
     from models import storage
     from models.city import City
     
-    # checking if city_id is None
-    if city_id is None:
-        abort(404)
     # checking if city_id is connected to City
     city = storage.get(City, city_id)
     if city is None:
@@ -86,6 +83,7 @@ def get_city(city_id=None):
             # updating city dictionary
             # which saves in the city object right?
             city.__dict__.update({key: value})
+        city.save()
 
     # returning city object        
     return jsonify(city.to_dict()), 200
