@@ -59,8 +59,8 @@ def create_review(place_id):
     if 'text' not in HTTP_body:
         abort(400, 'Missing text')
     latest_review = Review(place_id=place_id,
-                        user_id=review_data['user_id'],
-                        text=review_data['text'])
+                        user_id=HTTP_body['user_id'],
+                        text=HTTP_body['text'])
     latest_review.save()
     return jsonify(latest_review.to_dict()), 201
 
