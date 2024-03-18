@@ -24,19 +24,38 @@ def create_cities(state_id=None):
     from models import storage
     from models.state import State
     from models.city import City
+
+    # checking if state_id given is None
     if state_id is None:
         abort(404, "state_id is none")
+
+    # checks if state_id is connected to state object
     state = storage.get(State, state_id)
     if state is None:
         abort (404, "state object is none")
+
+    # uses get_json to parse http_body into dict
     http = request.get_json(silent=True)
+    
+    # get_json returns None if it fails
     if not http:
         abort(404, 'Not a JSON')
-    if 'name' not in http:
+
+    # checks if name is in http dict
+    if 'name' not in http.keys():
         abort(400, 'Missing name')
+    
+    # adds state_id to http dict
+    http.update({'state_id': state_id})
+    
+    # init new City object with http dict
     city = City(**http)
-    storage.new(city)
-    storage.save()
+
+    # performs new on object, updates and saves with
+    # Basemodel save method
+    city.save()
+
+    # returns jsonified dict of city object
     return jsonify(city.to_dict()), 201
 
 
