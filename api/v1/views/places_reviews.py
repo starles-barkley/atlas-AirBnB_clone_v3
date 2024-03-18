@@ -6,16 +6,18 @@ from flask import Flask, jsonify, abort, request
 from models import storage
 from api.v1.views import index
 from api.v1.views import app_views
-from models.reviews import Reviews
+from models.review import Reviews
+from models.user import User
+from models.place import Place
 
 
-@app_views.route('/reviews', methods=['GET'], strict_slashes=False)
+@app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
 def get_reviews():
-    '''Gets all reviews'''
-    reviews = []
-    for review in storage.all(Reviews).values():
-        reviews.append(review.to_dict())
-    return jsonify(reviews)
+    '''Gets all reviews of a specific place'''
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404)
+    return jsonify([review.to_dict() for review in place.reviews])
 
 
 @app_views.route(
@@ -23,7 +25,7 @@ def get_reviews():
 def review_by_id(review_id):
     '''Get review by using id'''
     review = storage.get(Review, review_id)
-    if not amenity:
+    if not review:
         abort(404)
     return jsonify(review.to_dict())
 
@@ -41,13 +43,21 @@ def delete_review(review_id):
 
 
 @app_views.route('/reviews', methods=['POST'], strict_slashes=False)
-def create_reviews():
+def create_review(place_id):
     '''creates a review'''
-    HTTP_body = request.get_json(silent=True)
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(400)
+    HTTP_body = request.get_json()
     if not HTTP_body:
-        abort(400, 'Not a JSON')
-    if 'name' not in HTTP_body:
-        abort(400, 'Missing name')
+        abort(400, 'Not a json')
+    if 'user_id' not in HTTP_body:
+        abort(400, 'Missing user_id')
+    user = storage.get(User, HTTP_body['user_id'])
+    if not user:
+        abort(404)
+    if 'text' not in HTTP_body:
+        abort(400, 'Missing text')
     latest_review = Review(**HTTP_body)
     storage.new(latest_review)
     storage.save()
@@ -58,14 +68,15 @@ def create_reviews():
     '/reviews/<review_id>', methods=['PUT'], strict_slashes=False)
 def update_reviews(review_id):
     '''Updates a review'''
-    json_data = request.get_json(silent=True)
+    HTTP_body = request.get_json(silent=True)
     review = storage.get(Review, review_id)
     if not review:
         abort(404)
-    if not json_data:
+    if not HTTP_body:
         abort(400, "Not a JSON")
-    for key, value in json_data.items():
-        if key not in ["id", "created_at", "updated_at"]:
+    for key, value in HTTP_body.items():
+        if key not in [
+            "id", "user_id", "place_id" "created_at", "updated_at"]:
             setattr(review, key, value)
-    storage.save()
+    review.save()
     return jsonify(review.to_dict()), 200
