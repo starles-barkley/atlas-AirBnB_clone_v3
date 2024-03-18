@@ -19,6 +19,7 @@ def manipulate_cities(place_id):
 
     if request.method == 'DELETE':
         storage.delete(place)
+        storage.save()
         return {}, 200
 
     if request.method == 'PUT':
