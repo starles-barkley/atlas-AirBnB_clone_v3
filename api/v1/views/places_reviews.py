@@ -47,20 +47,21 @@ def create_review(place_id):
     '''creates a review'''
     place = storage.get(Place, place_id)
     if not place:
-        abort(400)
-    HTTP_body = request.get_json()
+        abort(400, 'Place not found')
+    HTTP_body = request.get_json(silent=True)
     if not HTTP_body:
         abort(400, 'Not a json')
     if 'user_id' not in HTTP_body:
         abort(400, 'Missing user_id')
     user = storage.get(User, HTTP_body['user_id'])
     if not user:
-        abort(404)
+        abort(404, 'User not found')
     if 'text' not in HTTP_body:
         abort(400, 'Missing text')
-    latest_review = Review(**HTTP_body)
-    storage.new(latest_review)
-    storage.save()
+    latest_review = Review(place_id=place_id,
+                        user_id=review_data['user_id'],
+                        text=review_data['text'])
+    latest_review.save()
     return jsonify(latest_review.to_dict()), 201
 
 
