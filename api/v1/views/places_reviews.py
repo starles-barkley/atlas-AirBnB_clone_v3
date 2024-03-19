@@ -6,13 +6,14 @@ from flask import Flask, jsonify, abort, request
 from models import storage
 from api.v1.views import index
 from api.v1.views import app_views
-from models.review import Reviews
+from models.review import Review
 from models.user import User
 from models.place import Place
 
 
-@app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
-def get_reviews():
+@app_views.route(
+    '/places/<place_id>/reviews', methods=['GET'], strict_slashes=False)
+def get_reviews(place_id):
     '''Gets all reviews of a specific place'''
     place = storage.get(Place, place_id)
     if not place:
@@ -42,25 +43,27 @@ def delete_review(review_id):
     return jsonify({}), 200
 
 
-@app_views.route('/reviews', methods=['POST'], strict_slashes=False)
+@app_views.route(
+    '/places/<place_id>/reviews', methods=['POST'], strict_slashes=False)
 def create_review(place_id):
     '''creates a review'''
     place = storage.get(Place, place_id)
     if not place:
-        abort(400)
-    HTTP_body = request.get_json()
+        abort(404, 'Place not found')
+    HTTP_body = request.get_json(silent=True)
     if not HTTP_body:
         abort(400, 'Not a json')
     if 'user_id' not in HTTP_body:
         abort(400, 'Missing user_id')
     user = storage.get(User, HTTP_body['user_id'])
     if not user:
-        abort(404)
+        abort(404, 'User not found')
     if 'text' not in HTTP_body:
         abort(400, 'Missing text')
-    latest_review = Review(**HTTP_body)
-    storage.new(latest_review)
-    storage.save()
+    latest_review = Review(
+        place_id=place_id, user_id=HTTP_body[
+            'user_id'], text=HTTP_body['text'])
+    latest_review.save()
     return jsonify(latest_review.to_dict()), 201
 
 
@@ -76,7 +79,7 @@ def update_reviews(review_id):
         abort(400, "Not a JSON")
     for key, value in HTTP_body.items():
         if key not in [
-            "id", "user_id", "place_id" "created_at", "updated_at"]:
+                "id", "user_id", "place_id" "created_at", "updated_at"]:
             setattr(review, key, value)
     review.save()
     return jsonify(review.to_dict()), 200
