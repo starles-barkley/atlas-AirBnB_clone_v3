@@ -97,7 +97,7 @@ class DBStorage:
 
             # len of dict seems to return correct amount, not sure
             return len(total_list)
-        
+
         # returning only class objects if cls is given, use storage.all
         cls_list = self.all(cls)
 
