@@ -91,7 +91,8 @@ class TestFileStorage(unittest.TestCase):
     def test_get(self):
         from models import storage
         from models.state import State
-
+        state = State()
+        state.save()
         first_state_id = list(storage.all(State).values())[0].id
         first_state = storage.get(State, first_state_id)
         self.assertTrue(isinstance(first_state, State))
