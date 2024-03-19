@@ -55,7 +55,7 @@ class FileStorage:
                 jo = json.load(f)
             for key in jo:
                 self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
-        except:
+        except BaseException:
             pass
 
     def delete(self, obj=None):
@@ -76,7 +76,7 @@ class FileStorage:
 
         # iterates through dict; format: <state>.<id>:<instance>
         for obj in objs:
-            
+
             # if str after "." matches given str id
             if id == obj.split(".")[1]:
                 return obj
@@ -93,7 +93,7 @@ class FileStorage:
 
             # len of dict seems to return correct amount, not sure
             return len(total_list)
-        
+
         # returning only class objects if cls is given, use storage.all
         cls_list = self.all(cls)
 
